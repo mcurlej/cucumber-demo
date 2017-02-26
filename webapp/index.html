@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html ng-app="app">
+  <head>
+    <meta charset="UTF-8">
+    <title>Cucumber Demo</title>
+  </head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" />
+  <body ng-controller="ctrl as ctrl">
+    <div class="row">
+      <div class="col-md-6" ng-show="ctrl.error" style="margin-left:20px;">
+        <p class="text-danger bg-danger">{{ctrl.error}}</p> 
+      </div>
+      <div class="col-md-6" ng-show="ctrl.success" style="margin-left:20px;">
+        <p class="text-success bg-success">{{ctrl.success}}</p> 
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6" ng-hide="ctrl.loggedUser" style="margin-left:20px;">
+        <form novalidate>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Username</label>
+            <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Username" ng-model="ctrl.username">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">Password</label>
+            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" ng-model="ctrl.password">
+          </div>
+          <button type="submit" class="btn btn-default" ng-click="ctrl.login()">Login</button>
+        </form>
+      </div>
+    </div>
+    
+    <div ng-show="ctrl.loggedUser" style="margin-left:20px;">
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading"><h1>{{ctrl.title}} {{ctrl.username}}</h1></div>
+          <div class="panel-body">
+            <p>
+            <h4>From: </h4>{{ctrl.loggedUser.city}}
+            </p>
+            <p>
+            <h4>Favorite Language: </h4>{{ctrl.loggedUser.language}}
+            </p>
+          </div>
+          <div class="panel-footer">
+            <button ng-click="ctrl.logout()">Logout</button>
+          </div>
+        </div>
+      </div>  
+    </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js" type="text/javascript"></script>
+  <script>
+    (function() {
+    
+      angular.module("app", []).controller("ctrl", controller);
+
+      function controller() {
+        let self = this;
+        
+        self.username = "";
+        self.password = "";
+        self.error = "";
+        self.loggedUser = "";
+
+        self.users = {
+          "Bob": {
+            "pass": "nbusr123",
+            "title": "Mr.",
+            "city": "Ostrava",
+            "language": "Python"
+          },
+          "Martin": {
+            "pass": "changeme",
+            "title": "Pan",
+            "city": "Olomouc",
+            "language": "Javascript"
+          }
+        };
+
+        self.login = function () {
+          if(!self.username || !self.password) {
+            self.error = "Username or Password is empty!!";
+          } else if(!self.users[self.username] || self.users[self.username]["pass"] !== self.password) {
+              self.error = "Username or Password incorrect!!"
+          } else {
+            self.loggedUser = self.users[self.username];
+            self.success = "User " + self.username + " is succesfully logged in!!";
+            self.error = "";
+          }
+        } 
+        self.logout = function () {
+          self.success = "User " + self.username + " was logged out!!";
+          self.loggedUser = "";
+          self.username = "";
+          self.password = "";
+        }
+
+      }
+    
+    
+    })();
+  
+  </script>
+  </body>
+</html>
+
