@@ -67,12 +67,20 @@ Vagrant.configure("2") do |config|
   #   push.app = "YOUR_ATLAS_USERNAME/YOUR_APPLICATION_NAME"
   # end
   ssh_pub_key = File.readlines("/home/mcurlej/.ssh/id_rsa.pub").first.strip
+  config.vm.provision 'shell', inline: "echo 'Installing public key...'"
   config.vm.provision 'shell', inline: "echo #{ssh_pub_key} >> /root/.ssh/authorized_keys"
   config.vm.provision 'shell', inline: "echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys", privileged: false
+  config.vm.provision 'shell', inline: "echo 'Installing deployment dependencies...'"
   config.vm.provision 'shell', inline: "dnf install git-core nodejs -y --nogpgcheck"
-  config.vm.provision 'shell', inline: "git clone && cd cucumber-demo/webapp"
-  config.vm.provision 'shell', inline: "npm install"
-  config.vm.provision 'shell', inline: "nohup http-server &"
+  config.vm.provision 'shell', inline: "echo 'Cloning webapp from github...'"
+  config.vm.provision 'shell', inline: "git clone https://github.com/mcurlej/cucumber-demo.git"
+  config.vm.provision 'shell', inline: "echo 'Installing server...'"
+  config.vm.provision 'shell', inline: "npm install http-server -g"
+  config.vm.provision 'shell', inline: "echo 'Starting node http-server...'"
+  config.vm.provision 'shell', inline: "nohup http-server ./cucumber-demo/webapp/ > /dev/null 2>&1 &"
+  config.vm.provision 'shell', inline: "echo 'Server runnin on...'"
+  config.vm.provision 'shell', inline: "netstat -tanup | grep node"
+
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
